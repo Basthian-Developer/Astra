@@ -1,0 +1,14 @@
+services:
+  app:
+    container_name: nova-app
+    image: node:20
+    working_dir: /app
+    stdin_open: true
+    tty: true
+    command: tail -f /dev/null
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./src:/app
+      - ./docs:/output
+    restart: unless-stopped

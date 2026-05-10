@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "destacado": true,
+    "titulo": "El samurai olvidado",
+    "autor": "StardustOwO",
+    "year": 2026,
+    "tags": [
+      "Personaje Original",
+      "Fantasía",
+      "Drama"
+    ],
+    "desc": "Una historia dolorosa de perdidas y sangre, pero tambien de esperanza.",
+    "info": {
+      "ruta": "/novelas/samurai-olvidado",
+      "sinopsis": "Stardust Seiya, un joven proveniente de los tiempos de guerra en Japón, epoca conocida como Sengoku, fue transportado a un mundo fantastico llamado HySpain, sin embargo, una serie de eventos le han hecho reflexionar y rememorar todas las buenas y malas experiencias que sufrio para convertise en lo que hoy es. \n ¿Existira algo o alguien que le de la esperanza para seguir viviendo?."
+    },
+    "estado": "En curso",
+    "imagen": "ilustraciones/Seiya-27-04-2026/portada-seiya-001.png"
+  },
+  {
+    "id": 2,
+    "destacado": true,
+    "titulo": "Hermandad y sangre",
+    "autor": "StardustOwO y Schedir",
+    "year": 2026,
+    "tags": [
+      "Personaje Original",
+      "FanFic",
+      "Fantasía",
+      "Universo Alternativo"
+    ],
+    "desc": "En un mundo donde solo gobierna el más fuerte, dos hermanos unidos por la sangre desafiarán al destino.",
+    "info": {
+      "ruta": "/novelas/hermanos-y-sangre",
+    "sinopsis": "Hoshito y Shion, dos hermanos unidos por su amor a los videojuegos, ingresan emocionados a Sword Art Online, solo para quedar atrapados junto a miles de jugadores en Aincrad. La regla es clara y cruel: no hay salida, y morir en el juego significa morir en la realidad. \n En un mundo donde la supervivencia lo es todo, deberán enfrentar monstruos, alianzas frágiles y decisiones imposibles. \n\n A medida que avanzan, descubrirán que el mayor peligro no siempre son los enemigos del juego… sino los propios jugadores, y las oscuras elecciones que algunos están dispuestos a tomar incluyendo ellos mismos para seguir con vida.",
+      "capitulos": []
+    },
+    "estado": "Proximamente",
+    "imagen": "ilustraciones/Seiya-27-04-2026/portada-hoshito-002.png"
+  },
+  {
+    "id": 3,
+    "destacado": true,
+    "titulo": "Caminos de gloria",
+    "autor": "StardustOwO",
+    "year": 2026,
+    "tags": [
+      "Personaje Original",
+      "Fantasía",
+      "Aventura"
+    ],
+    "desc": "El orden y el caos reinan en altamar, pero una aventurera luchara por ser el terror de los 7 mares.",
+    "info": {
+      "ruta": "/novelas/caminos-gloria",
+      "sinopsis": "El orden y el caos reinan en altamar, pero una aventurera luchara por ser el terror de los 7 mares.",
+      "capitulos": []
+    },
+    "estado": "Proximamente",
+    "imagen": "ilustraciones/Seiya-27-04-2026/portada-kirara-001.png"
+  }
+]
