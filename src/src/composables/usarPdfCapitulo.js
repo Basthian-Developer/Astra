@@ -102,59 +102,46 @@ export function usarPdfCapitulo(slug, currentPage) {
         try {
             if (!pdfDoc) return
 
-            const page =
-                await pdfDoc.getPage(currentPage.value + 1)
+            const page = await pdfDoc.getPage(currentPage.value + 1)
 
             const canvas = canvases[0]
             if (!canvas) return
 
             const context = canvas.getContext('2d')
 
-            /*
-            viewport base sin escala
-            */
-            const baseViewport = page.getViewport({
-                scale: 1
-            })
+            // viewport base
+            const baseViewport = page.getViewport({ scale: 1 })
 
-            /*
-            ancho disponible pantalla
-            */
+            // tamaño visible deseado
             const screenWidth = window.innerWidth
-
-            /*
-            márgenes laterales
-            */
             const padding = 32
-
-            /*
-            ancho máximo escritorio
-            */
             const maxWidth = 900
 
-            /*
-            ancho final permitido
-            */
             const targetWidth = Math.min(
                 screenWidth - padding,
                 maxWidth
             )
 
-            /*
-            escala automática
-            */
-            const scale =
-                targetWidth / baseViewport.width
+            const scale = targetWidth / baseViewport.width
 
-            /*
-            viewport final
-            */
-            const viewport = page.getViewport({
-                scale
-            })
+            const viewport = page.getViewport({ scale })
 
-            canvas.width = viewport.width
-            canvas.height = viewport.height
+            // 🔥 factor retina
+            const dpr = window.devicePixelRatio || 1
+
+            // tamaño REAL del canvas (más píxeles)
+            canvas.width = Math.floor(viewport.width * dpr)
+            canvas.height = Math.floor(viewport.height * dpr)
+
+            // tamaño visual CSS
+            canvas.style.width = `${viewport.width}px`
+            canvas.style.height = `${viewport.height}px`
+
+            // reset transform
+            context.setTransform(1, 0, 0, 1, 0, 0)
+
+            // escalar dibujo
+            context.scale(dpr, dpr)
 
             await page.render({
                 canvasContext: context,
@@ -162,10 +149,7 @@ export function usarPdfCapitulo(slug, currentPage) {
             }).promise
 
         } catch (err) {
-            console.error(
-                'Error renderizando página:',
-                err
-            )
+            console.error('Error renderizando página:', err)
         }
     }
 
