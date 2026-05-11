@@ -100,56 +100,62 @@ export function usarPdfCapitulo(slug, currentPage) {
 
     const renderPage = async () => {
         try {
-
-            /*
-            si no hay documento cargado,
-            no se puede renderizar.
-            */
             if (!pdfDoc) return
 
-            /*
-            currentPage empieza en 0
-            pdfjs empieza en 1
-            */
             const page =
                 await pdfDoc.getPage(currentPage.value + 1)
 
-            /*
-            viewport:
-            tamaño y escala del render.
-            scale 1.5 = mejor resolución.
-            */
-            const viewport = page.getViewport({
-                scale: 1.5
-            })
-
-            /*
-            usamos solo el primer canvas.
-            El canvas permanece montado y solo cambia su dibujo.
-            */
             const canvas = canvases[0]
-
-            /*
-            si el canvas aún no existe en DOM
-            salir sin error.
-            */
             if (!canvas) return
 
-            /*
-            contexto 2D del canvas
-            */
             const context = canvas.getContext('2d')
 
             /*
-            ajustar tamaño real del canvas
-            al tamaño de la página PDF.
+            viewport base sin escala
             */
+            const baseViewport = page.getViewport({
+                scale: 1
+            })
+
+            /*
+            ancho disponible pantalla
+            */
+            const screenWidth = window.innerWidth
+
+            /*
+            márgenes laterales
+            */
+            const padding = 32
+
+            /*
+            ancho máximo escritorio
+            */
+            const maxWidth = 900
+
+            /*
+            ancho final permitido
+            */
+            const targetWidth = Math.min(
+                screenWidth - padding,
+                maxWidth
+            )
+
+            /*
+            escala automática
+            */
+            const scale =
+                targetWidth / baseViewport.width
+
+            /*
+            viewport final
+            */
+            const viewport = page.getViewport({
+                scale
+            })
+
             canvas.width = viewport.width
             canvas.height = viewport.height
 
-            /*
-            dibujar página en canvas
-            */
             await page.render({
                 canvasContext: context,
                 viewport
