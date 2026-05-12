@@ -121,9 +121,17 @@ onMounted(async () => {
           </div>
 
           <!-- Imagen -->
-          <div class="w-full md:w-1/2 flex justify-center items-center">
-            <img src="/ilustraciones/prueba-personaje.png" class="w-auto max-h-[45vh] md:max-h-[85vh] object-contain"
+          <div class="hidden md:flex w-full md:w-1/2 flex-col justify-center items-center">
+            <img src="/ilustraciones/Hina-Saludando.jpg" class="w-auto max-h-[45vh] md:max-h-[85vh] object-contain"
               alt="pet-portada" />
+            <p class="text-slate-500">Hana - Guardiana de la biblioteca</p>
+          </div>
+
+          <!-- Imagen -->
+          <div class="md:hidden flex w-full md:w-1/2 flex-col justify-center items-center">
+            <img src="/ilustraciones/Hana-Dragon-Roar.jpg" class="w-auto max-h-[85vh] object-contain"
+              alt="pet-portada" />
+            <p class="text-slate-500">Hana - Guardiana de la biblioteca</p>
           </div>
 
         </div>
@@ -133,27 +141,44 @@ onMounted(async () => {
 
       <!--Descripcion-->
       <section id="informacion" class="flex flex-col items-center mb-16 scroll-mt-30 informacion">
-        <h1 class="text-3xl md:text-4xl font-bold text-amber-200">¿Qué es este lugar?</h1>
-        <p
-          class="mt-6 text-slate-400 text-base mx-12 text-left md:mx-auto max-w-md md:max-w-3xl leading-relaxed tracking-wide">
-          Nova Stella es un proyecto donde comparto historias creadas a partir de personajes utilizados en videojuegos y
-          experiencias de roleplay.
-        </p>
-        <p
-          class="mt-6 text-slate-400 text-base mx-12 text-left md:mx-auto max-w-md md:max-w-3xl leading-relaxed tracking-wide">
-          Cada obra puede reutilizar personajes, pero cada una se desarrolla en un universo independiente, donde los
-          eventos y relaciones no se conectan entre sí, a no ser de que se indique textualmente en la obra.
-        </p>
-        <p
-          class="mt-6 text-slate-400 text-base mx-12 text-left md:mx-auto max-w-md md:max-w-3xl leading-relaxed tracking-wide">
-          El sitio está en constante desarrollo, por lo que puede recibir cambios visuales o funcionales con el tiempo,
-          siempre buscando mejorar la experiencia de lectura.
-        </p>
-        <p
-          class="mt-6 text-slate-400 text-base mx-12 text-left md:mx-auto max-w-md md:max-w-3xl leading-relaxed tracking-wide">
-          Actualmente el proyecto se encuentra en una fase inicial y utiliza herramientas gratuitas, pero en el futuro
-          podría expandirse si continúa creciendo.
-        </p>
+        <div class="flex flex-col md:flex-row justify-center">
+          <div class="hidden md:flex w-full md:w-1/2 flex-col justify-center items-center">
+            <img src="/ilustraciones/Hana-Sensei.jpg" alt="Hana presentado"
+              class="w-auto max-h-[45vh] md:max-h-[85vh] object-contain">
+          </div>
+          <div class="flex flex-col items-center">
+            <h1 class="text-3xl md:text-4xl font-bold text-amber-200">¿Qué es este lugar?</h1>
+            <p
+              class="mt-6 text-slate-400 text-base mx-12 text-left md:mx-auto max-w-md md:max-w-3xl leading-relaxed tracking-wide">
+              Nova Stella es un proyecto donde comparto historias creadas a partir de personajes utilizados en
+              videojuegos
+              y
+              experiencias de roleplay.
+            </p>
+            <p
+              class="mt-6 text-slate-400 text-base mx-12 text-left md:mx-auto max-w-md md:max-w-3xl leading-relaxed tracking-wide">
+              Cada obra puede reutilizar personajes, pero cada una se desarrolla en un universo independiente, donde los
+              eventos y relaciones no se conectan entre sí, a no ser de que se indique textualmente en la obra.
+            </p>
+            <p
+              class="mt-6 text-slate-400 text-base mx-12 text-left md:mx-auto max-w-md md:max-w-3xl leading-relaxed tracking-wide">
+              El sitio está en constante desarrollo, por lo que puede recibir cambios visuales o funcionales con el
+              tiempo,
+              siempre buscando mejorar la experiencia de lectura.
+            </p>
+            <p
+              class="mt-6 text-slate-400 text-base mx-12 text-left md:mx-auto max-w-md md:max-w-3xl leading-relaxed tracking-wide">
+              Actualmente el proyecto se encuentra en una fase inicial y utiliza herramientas gratuitas, pero en el
+              futuro
+              podría expandirse si continúa creciendo.
+            </p>
+          </div>
+          <div class="flex md:hidden w-full md:w-1/2 flex-col justify-center items-center">
+            <img src="/ilustraciones/Hana-Maid.jpg" alt="Hana presentado"
+              class="w-auto max-h-[85vh] object-contain">
+          </div>
+        </div>
+
         <div class="mt-6 flex flex-col items-center text-slate-500 animate-bounce">
           <span class="text-xs uppercase tracking-widest">Desliza hacia abajo</span>
           <svg class="w-5 h-5 mt-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -169,7 +194,7 @@ onMounted(async () => {
         <h2 class="text-4xl serif my-16 text-center text-amber-200 font-bold">Obras Recientes</h2>
 
         <p class="md:hidden text-slate-500 text-center my-2">Desliza horizontalmente para ver más obras</p>
-        <NovelCarrusel :destacado="true"/>
+        <NovelCarrusel :destacado="true" />
         <div class="mt-6 flex flex-col items-center text-slate-500 animate-bounce">
           <span class="text-xs uppercase tracking-widest">Desliza hacia abajo</span>
           <svg class="w-5 h-5 mt-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
