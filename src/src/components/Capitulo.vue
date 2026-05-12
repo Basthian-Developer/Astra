@@ -408,7 +408,7 @@ onMounted(async () => {
 const navItems = [
   {
     label: 'Inicio',
-    to: '/'
+    to: '/inicio'
   },
   {
     label: 'Novelas',
@@ -421,7 +421,7 @@ const navItems = [
   <div class="min-h-screen bg-slate-950 overflow-x-hidden">
 
     <!-- NAVBAR -->
-    <Navbar :items="navItems" />
+    <Navbar :nav-items="navItems" />
     <div class="h-16"></div>
 
     <!-- BACK -->

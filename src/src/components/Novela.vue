@@ -200,13 +200,13 @@ watch(() => props.chapters, (newVal) => {
                 <hr class="border-white/5 mb-24" />
 
                 <section id="chapters-section" class="max-w-4xl mx-auto">
-                    <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+                    <div class="flex flex-col md:flex-row justify-between md:items-end items-stretch mb-12 gap-6 w-full overflow-hidden">
                         <div>
                             <h3 class="text-3xl font-bold text-white mb-2 tracking-tight">Índice de Capítulos</h3>
                             <p class="text-slate-500 text-sm italic">Explora la progresión de la historia</p>
                         </div>
 
-                        <div class="flex bg-white/5 p-1 rounded-lg border border-white/10">
+                        <div class="flex justify-center bg-white/5 p-1 rounded-lg border border-white/10">
                             <button @click="sortChapters('asc')"
                                 :class="['px-4 py-2 text-xs uppercase tracking-widest rounded-md transition-all', order === 'asc' ? 'bg-amber-500 text-black font-bold' : 'text-slate-400']">Ascendente</button>
                             <button @click="sortChapters('desc')"
@@ -259,7 +259,7 @@ watch(() => props.chapters, (newVal) => {
                                 </div>
 
                                 <button @click="openChapter(ch)"
-                                    class="px-6 py-2 text-xs uppercase tracking-widest font-bold border border-white/10 rounded-full group-hover:bg-amber-500 group-hover:text-black transition-all">
+                                    class="px-5 py-2 text-xs uppercase tracking-widest font-bold border border-white/10 rounded-full group-hover:bg-amber-500 group-hover:text-black transition-all">
                                     Leer
                                 </button>
                             </div>
