@@ -1,102 +1,53 @@
 import { ref, nextTick } from 'vue'
 
 /* ==================================================
-   VARIABLES GLOBALES DEL MÓDULO
+   CACHE GLOBAL
 ================================================== */
 
-/*
-pdfjsLib:
-guarda la librería pdfjs ya importada dinámicamente.
-Se mantiene en memoria para no volver a importarla.
-*/
 let pdfjsLib = null
-
-/*
-iniciado:
-bandera para saber si pdfjs ya fue inicializado.
-Evita repetir imports y configuración del worker.
-*/
 let iniciado = false
-
-/*
-pdfDoc:
-almacena el documento PDF actualmente abierto.
-Así no se vuelve a cargar al cambiar página.
-*/
 let pdfDoc = null
 
+// 🔥 cache real por URL
+const pdfCache = new Map()
+
+// 🔥 contexto canvas reutilizable
+let ctx = null
+
 /* ==================================================
-   INICIALIZAR PDF.JS SOLO UNA VEZ
+   INICIALIZAR PDF.JS
 ================================================== */
 
 async function iniciarPdf() {
-
-    // si ya fue inicializado antes, salir
     if (iniciado) return
 
-    /*
-    import dinámico:
-    carga pdfjs solo cuando se necesita.
-    Reduce peso inicial de la app.
-    */
-    const pdfjs = await import('pdfjs-dist')
+    const pdfjs = await import('pdfjs-dist/build/pdf')
+    const pdfWorker = await import('pdfjs-dist/build/pdf.worker?url')
 
-    /*
-    worker del PDF:
-    procesa parsing/render en segundo hilo
-    para no bloquear la interfaz.
-    */
-    const pdfWorker =
-        await import('pdfjs-dist/build/pdf.worker?url')
+    pdfjs.GlobalWorkerOptions.workerSrc = pdfWorker.default
 
-    /*
-    indicar a pdfjs dónde está el worker.
-    */
-    pdfjs.GlobalWorkerOptions.workerSrc =
-        pdfWorker.default
-
-    /*
-    guardar librería cargada
-    */
     pdfjsLib = pdfjs
-
-    /*
-    marcar como iniciado
-    */
     iniciado = true
 }
 
 /* ==================================================
-   COMPOSABLE PRINCIPAL
+   COMPOSABLE
 ================================================== */
 
 export function usarPdfCapitulo(slug, currentPage) {
 
-    /*
-    pages:
-    array reactivo para cantidad de páginas.
-    Ejemplo: [1,2,3,4]
-    Se usa en el template.
-    */
     const pages = ref([])
-
-    /*
-    canvases:
-    refs reales de los canvas del DOM.
-    Vue los llena mediante :ref
-    */
     const canvases = []
-    const zoom = ref(1)
 
-    /* ----------------------------------------------
-       CONSTRUIR URL DEL PDF SEGÚN SLUG
-    ---------------------------------------------- */
+    /* ==================================================
+       URL PDF
+    ================================================== */
 
     const getPdfUrl = () =>
         `${import.meta.env.BASE_URL}documentos/${slug.value}.pdf`
 
     /* ==================================================
-       RENDERIZAR SOLO LA PÁGINA ACTUAL
+       RENDER PAGE
     ================================================== */
 
     const renderPage = async () => {
@@ -108,44 +59,44 @@ export function usarPdfCapitulo(slug, currentPage) {
             const canvas = canvases[0]
             if (!canvas) return
 
-            const context = canvas.getContext('2d')
+            if (!ctx) {
+                ctx = canvas.getContext('2d')
+            }
 
-            // viewport base
             const baseViewport = page.getViewport({ scale: 1 })
 
-            // tamaño visible deseado
             const screenWidth = window.innerWidth
             const padding = 32
-            const maxWidth = 900
 
+            const maxWidth =
+                window.innerWidth >= 768
+                    ? 900
+                    : screenWidth
             const targetWidth = Math.min(
                 screenWidth - padding,
                 maxWidth
             )
 
-            const scale = (targetWidth / baseViewport.width) * zoom.value
+            const scale = targetWidth / baseViewport.width
 
             const viewport = page.getViewport({ scale })
 
-            // 🔥 factor retina
-            const dpr = window.devicePixelRatio || 1
+            // 🔥 reducir carga en móviles
+            const dpr = window.innerWidth < 768
+                ? 1
+                : (window.devicePixelRatio || 1)
 
-            // tamaño REAL del canvas (más píxeles)
             canvas.width = Math.floor(viewport.width * dpr)
             canvas.height = Math.floor(viewport.height * dpr)
 
-            // tamaño visual CSS
             canvas.style.width = `${viewport.width}px`
             canvas.style.height = `${viewport.height}px`
 
-            // reset transform
-            context.setTransform(1, 0, 0, 1, 0, 0)
-
-            // escalar dibujo
-            context.scale(dpr, dpr)
+            ctx.setTransform(1, 0, 0, 1, 0, 0)
+            ctx.scale(dpr, dpr)
 
             await page.render({
-                canvasContext: context,
+                canvasContext: ctx,
                 viewport
             }).promise
 
@@ -155,67 +106,47 @@ export function usarPdfCapitulo(slug, currentPage) {
     }
 
     /* ==================================================
-       CARGAR PDF COMPLETO (SOLO CAMBIO DE CAPÍTULO)
+       LOAD PDF
     ================================================== */
 
     const loadPdf = async () => {
         try {
-
-            /*
-            asegurar que pdfjs esté listo
-            */
             await iniciarPdf()
 
-            /*
-            limpiar estado anterior
-            */
+            const url = getPdfUrl()
+
             pages.value = []
             canvases.length = 0
 
-            /*
-            abrir nuevo documento PDF
-            */
-            pdfDoc = await pdfjsLib
-                .getDocument(getPdfUrl())
-                .promise
+            // 🔥 CACHE REAL
+            if (pdfCache.has(url)) {
+                pdfDoc = pdfCache.get(url)
+            } else {
+                pdfDoc = await pdfjsLib.getDocument(url).promise
+                pdfCache.set(url, pdfDoc)
+            }
 
-            /*
-            crear array según número de páginas
-            Ejemplo: [1,2,3,4,5]
-            */
             pages.value = Array.from(
                 { length: pdfDoc.numPages },
                 (_, i) => i + 1
             )
 
-            /*
-            esperar a que Vue monte el canvas
-            */
             await nextTick()
-
-            /*
-            renderizar primera página
-            o página actual.
-            */
             await renderPage()
 
         } catch (err) {
-            console.error(
-                'Error cargando PDF:',
-                err
-            )
+            console.error('Error cargando PDF:', err)
         }
     }
 
     /* ==================================================
-       RETORNO DEL COMPOSABLE
+       RETURN
     ================================================== */
 
     return {
-        pages,       // páginas disponibles
-        canvases,    // refs canvas
-        loadPdf,     // cargar nuevo PDF
-        renderPage,   // cambiar página actual,
-        zoom
+        pages,
+        canvases,
+        loadPdf,
+        renderPage
     }
 }
