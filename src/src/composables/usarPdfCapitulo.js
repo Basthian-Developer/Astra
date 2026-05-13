@@ -82,8 +82,10 @@ export function usarPdfCapitulo(slug, currentPage) {
             const viewport = page.getViewport({ scale })
 
             // 🔥 reducir carga en móviles
-            const dpr = window.innerWidth < 768
-                ? 1
+            const isMobile = window.innerWidth < 768
+
+            const dpr = isMobile
+                ? Math.min(window.devicePixelRatio || 1, 2)
                 : (window.devicePixelRatio || 1)
 
             canvas.width = Math.floor(viewport.width * dpr)
