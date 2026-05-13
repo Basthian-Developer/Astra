@@ -86,6 +86,7 @@ export function usarPdfCapitulo(slug, currentPage) {
     Vue los llena mediante :ref
     */
     const canvases = []
+    const zoom = ref(1)
 
     /* ----------------------------------------------
        CONSTRUIR URL DEL PDF SEGÚN SLUG
@@ -122,7 +123,7 @@ export function usarPdfCapitulo(slug, currentPage) {
                 maxWidth
             )
 
-            const scale = targetWidth / baseViewport.width
+            const scale = (targetWidth / baseViewport.width) * zoom.value
 
             const viewport = page.getViewport({ scale })
 
@@ -214,6 +215,7 @@ export function usarPdfCapitulo(slug, currentPage) {
         pages,       // páginas disponibles
         canvases,    // refs canvas
         loadPdf,     // cargar nuevo PDF
-        renderPage   // cambiar página actual
+        renderPage,   // cambiar página actual,
+        zoom
     }
 }
