@@ -161,7 +161,8 @@ const {
   pages,       // total páginas
   canvases,   // refs canvas DOM
   loadPdf,    // cargar documento
-  renderPage  // render página actual
+  renderPage,  // render página actual
+  zoom
 } = usarPdfCapitulo(
   slug,
   currentPage
@@ -368,7 +369,7 @@ const isLastPage = computed(() =>
 cuando cambia slug:
 cargar nuevo PDF
 */
-watch(slug, async() => {
+watch(slug, async () => {
   if (!canLoadChapter.value) return
   await loadPdf()
 })
@@ -479,9 +480,14 @@ const navItems = [
             Página →
           </button>
 
+
+        </div>
+        <div>
+          <p class="md:hidden mt-8 text-slate-400 text-center">Desliza la hoja para leer</p>
         </div>
 
       </div>
+
     </div>
 
     <!-- =========================
@@ -492,8 +498,18 @@ const navItems = [
         Cargando PDF...
       </div>
     </div>
-    <div ref="pdfViewer" class="flex flex-col items-center gap-4 pb-1 -mb-2">
-      <canvas :ref="el => canvases[0] = el" />
+    <div ref="pdfViewer" class="
+w-full
+h-[85vh]
+overflow-auto
+touch-pan-x touch-pan-y
+flex
+justify-start
+md:justify-center
+md:h-auto
+md:overflow-visible
+   ">
+      <canvas :ref="el => canvases[0] = el" class="origin-top md:max-w-full" />
     </div>
 
     <!-- =========================
