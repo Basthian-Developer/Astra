@@ -498,9 +498,10 @@ const navItems = [
         Cargando PDF...
       </div>
     </div>
+    <!--Celular-->
     <div ref="pdfViewer"
-      class="w-full h-[78dvh] md:h-full overflow-auto flex justify-start justify-start md:justify-center scroll-smooth overscroll-contain touch-pan-x touch-pan-y md:touch-auto md:overscroll-auto">
-      <canvas :ref="el => canvases[0] = el" class="w-full h-auto block mx-auto" />
+      class="w-full md:h-full h-[78dvh] overflow-auto flex md:justify-center scroll-smooth md:overscroll-auto overscroll-contain">
+      <canvas :ref="el => canvases[0] = el" class="block mx-auto w-full h-auto select-none" />
     </div>
 
     <!-- =========================
