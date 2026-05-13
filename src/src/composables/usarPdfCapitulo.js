@@ -21,8 +21,8 @@ let ctx = null
 async function iniciarPdf() {
     if (iniciado) return
 
-    const pdfjs = await import('pdfjs-dist/build/pdf')
-    const pdfWorker = await import('pdfjs-dist/build/pdf.worker?url')
+    const pdfjs = await import('pdfjs-dist/build/pdf.mjs')
+    const pdfWorker = await import('pdfjs-dist/build/pdf.worker.mjs?url')
 
     pdfjs.GlobalWorkerOptions.workerSrc = pdfWorker.default
 
