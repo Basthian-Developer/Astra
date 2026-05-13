@@ -500,7 +500,7 @@ const navItems = [
     </div>
     <!--Celular-->
     <div ref="pdfViewer"
-      class="w-full md:h-full h-[78dvh] overflow-auto flex md:justify-center scroll-smooth">
+      class="w-full md:h-full h-[78dvh] overflow-auto scroll-smooth">
       <canvas :ref="el => canvases[0] = el" class="block mx-auto w-full h-auto select-none" />
     </div>
 
