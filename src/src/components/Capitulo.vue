@@ -499,17 +499,9 @@ const navItems = [
       </div>
     </div>
     <div ref="pdfViewer" class="
-w-full
-h-[85vh]
-overflow-auto
-touch-pan-x touch-pan-y
-flex
-justify-start
-md:justify-center
-md:h-auto
-md:overflow-visible
-   ">
-      <canvas :ref="el => canvases[0] = el" class="origin-top md:max-w-full" />
+    w-full h-[85dvh] overflow-auto flex justify-center [touch-action:pan-x_pan-y]
+  ">
+      <canvas :ref="el => canvases[0] = el" class="origin-top max-w-none" />
     </div>
 
     <!-- =========================
