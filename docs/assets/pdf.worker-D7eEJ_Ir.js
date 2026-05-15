@@ -1,1 +1,0 @@
-var e=`/Nova-Stella/assets/pdf.worker-xSiVJ7U_.mjs`;export{e as default};
