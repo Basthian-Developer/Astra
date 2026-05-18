@@ -3,13 +3,15 @@
 import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import gsap from 'gsap'
 import { useRouter } from 'vue-router'
-import { signInWithEmailAndPassword } from 'firebase/auth'
-import { auth } from '../firebase'
+import { UsarSupabase } from '../services/UsarSupabase.js'
+import { supabase } from '../libs/supabase.js'
 
 // Componentes
 import Navbar from '../components/Navbar.vue'
 import Footer from '../components/Footer.vue'
 import Modal from '../components/Modal.vue'
+
+const { login } = UsarSupabase()
 
 // Variables
 let email = ref('')
@@ -80,26 +82,40 @@ const validarCampos = () => {
     }
 }
 
-const login = async () => {
+const loginSesion = async () => {
+
     sanitizarCampos()
     validarCampos()
 
     if (!isValid.value) return
 
-    const emailValue = email.value
-    const passValue = pass.value
-
     try {
-        const usuarioCredenciales = await signInWithEmailAndPassword(auth, emailValue, passValue)
 
-        console.log(usuarioCredenciales.user)
-        router.push('/dashboard')
+        const emailValue = email.value
+        const passValue = pass.value
+
+        const data = await login(emailValue, passValue)
+
+        const user = data?.user
+        if (!user) throw new Error('No user')
+
+        const { data: profile, error } = await supabase
+            .from('profiles')
+            .select('rol')
+            .eq('id', user.id)
+            .maybeSingle()
+
+        if (profile?.rol === 'admin') {
+            router.push('/dashboard/admin')
+        } else {
+            router.push('/dashboard/user')
+        }
+
     } catch (error) {
         modal.value = {
-            titulo: 'Fallo en la autenticación',
-            desc: 'Las credenciales son incorrectas',
-            confirmar: true,
-            cancelar: false
+            titulo: 'No se pudo iniciar sesión',
+            desc: 'Credenciales inválidas',
+            confirmar: true
         }
     }
 }
@@ -113,7 +129,6 @@ const confirmarModal = () => {
 }
 
 onMounted(() => {
-
     ctx = gsap.context(() => {
         gsap.from('.main', {
             x: 20,
@@ -185,7 +200,7 @@ const botones = [
                     <!-- Button -->
                     <button
                         class="mt-2 bg-gradient-to-r from-purple-500/80 to-fuchsia-500/80 text-white rounded-lg py-2.5 w-full font-bold hover:scale-105 transition duration-150"
-                        @click="login">
+                        @click="loginSesion">
                         Acceder
                     </button>
 
