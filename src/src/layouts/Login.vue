@@ -106,9 +106,9 @@ const loginSesion = async () => {
             .maybeSingle()
 
         if (profile?.rol === 'admin') {
-            router.push('/dashboard/admin')
+            router.push('/dashboard/admin/inicio')
         } else {
-            router.push('/dashboard/user')
+            router.push('/dashboard/user/inicio')
         }
 
     } catch (error) {

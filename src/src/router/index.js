@@ -1,30 +1,44 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { supabase } from '../libs/supabase'
 
+// Layouts
 import Inicio from '../layouts/Inicio.vue'
 import Login from '../layouts/Login.vue'
 import AdminDashboard from '../layouts/AdminDashboard.vue'
 import UserDashboard from '../layouts/UserDashboard.vue'
 
-const routes = [
-    { path: '/', component: Inicio },
-    { path: '/login', component: Login },
+// Views
 
-    {
-        path: '/dashboard/admin',
-        component: AdminDashboard,
-        meta: { requiresAuth: true, role: 'admin' }
-    },
-    {
-        path: '/dashboard/user',
-        component: UserDashboard,
-        meta: { requiresAuth: true, role: 'user' }
-    }
-]
+import InicioDashboard from '../views/dashboard/Inicio.vue'
+import NovelasDashboard from '../views/dashboard/Novelas.vue'
+import UsuariosDashboard from '../views/dashboard/Usuarios.vue'
 
 const router = createRouter({
     history: createWebHistory(),
-    routes
+    routes: [
+        { path: '/', component: Inicio },
+        { path: '/login', component: Login },
+
+        {
+            path: '/dashboard/admin',
+            component: AdminDashboard,
+            meta: { requiresAuth: true, role: 'admin' },
+            children: [
+                {path: 'inicio', name: 'inicio', component: InicioDashboard},
+                {path: 'novelas', name: 'novelas', component: NovelasDashboard},
+                {path: 'usuarios', name: 'usuarios', component: UsuariosDashboard}
+            ]
+        },
+        {
+            path: '/dashboard/user',
+            component: UserDashboard,
+            meta: { requiresAuth: true, role: 'user' },
+            children: [
+                {path: 'inicio', name: 'inicio', component: InicioDashboard},
+                {path: 'novelas', name: 'novelas', component: NovelasDashboard}
+            ]
+        }
+    ]
 })
 
 router.beforeEach(async (to) => {
@@ -46,8 +60,8 @@ router.beforeEach(async (to) => {
             .maybeSingle()
 
         return profile?.rol === 'admin'
-            ? '/dashboard/admin'
-            : '/dashboard/user'
+            ? '/dashboard/admin/inicio'
+            : '/dashboard/user/inicio'
     }
 
     // 🧠 control de roles (UN SOLO BLOQUE)
@@ -63,8 +77,8 @@ router.beforeEach(async (to) => {
 
         if (to.meta.role !== profile.rol) {
             return profile.rol === 'admin'
-                ? '/dashboard/admin'
-                : '/dashboard/user'
+                ? '/dashboard/admin/inicio'
+                : '/dashboard/user/inicio'
         }
     }
 
