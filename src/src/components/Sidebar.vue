@@ -3,7 +3,7 @@
 // Importaciones
 import { DoorClosed } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
-import { UsarSupabase } from '../services/UsarSupabase'
+import { UsarSupabase } from '../services/Auth'
 
 // Variables
 const router = useRouter()

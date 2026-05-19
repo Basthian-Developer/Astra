@@ -27,9 +27,22 @@ export function UsarSupabase() {
         await supabase.auth.signOut()
     }
 
+    const obtenerRol = async (id) => {
+        const { data, error } = await supabase
+            .from('profiles')
+            .select('rol')
+            .eq('id', id)
+            .maybeSingle()
+
+        if (error) throw error
+
+        return data?.rol
+    }
+
     return {
         register,
         login,
-        logout
+        logout,
+        obtenerRol
     }
 }
