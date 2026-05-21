@@ -16,14 +16,14 @@ const secciones = ref([
 </script>
 
 <template>
-    <div class="min-h-screen overflow-x-hidden flex flex-col">
+    <div class="min-h-screen flex flex-col">
         <div class="flex-1 w-full">
             <main class="flex min-h-150">
                 <!--Menu lateral-->
                 <Sidebar :secciones="secciones" />
 
                 <!--Contenido-->
-                <section class="ml-[25%] w-3/4 bg-slate-950">
+                <section class="md:ml-[25%] md:w-3/4 bg-slate-950 overflow-x-auto w-full">
                     <RouterView />
                 </section>
             </main>

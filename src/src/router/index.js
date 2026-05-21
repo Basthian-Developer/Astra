@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { supabase } from '../libs/supabase'
-import { UsarSupabase } from '../services/Auth'
+import { Auth } from '../services/Auth'
 
 // Layouts
 const Inicio = () => import('../layouts/Inicio.vue')
@@ -10,13 +10,10 @@ const UserDashboard = () => import('../layouts/UserDashboard.vue')
 
 // Views
 
-import InicioDashboard from '../views/dashboard/Inicio.vue'
-import NovelasDashboard from '../views/dashboard/Novelas.vue'
-import UsuariosDashboard from '../views/dashboard/Usuarios.vue'
-
-// Variables
-
-const { obtenerRol } = UsarSupabase()
+const InicioUserDashboard = () => import('../views/dashboard/Inicio.vue')
+const InicioAdminDashboard = () => import('../views/dashboard/admin/Inicio.vue')
+const NovelasDashboard = () => import('../views/dashboard/Novelas.vue')
+const UsuariosDashboard = () => import('../views/dashboard/Usuarios.vue')
 
 const router = createRouter({
     history: createWebHistory(),
@@ -29,7 +26,7 @@ const router = createRouter({
             component: AdminDashboard,
             meta: { requiresAuth: true, role: 'admin' },
             children: [
-                { path: 'inicio', name: 'admin-inicio', component: InicioDashboard },
+                { path: 'inicio', name: 'admin-inicio', component: InicioAdminDashboard },
                 { path: 'novelas', name: 'admin-novelas', component: NovelasDashboard },
                 { path: 'usuarios', name: 'admin-usuarios', component: UsuariosDashboard }
             ]
@@ -39,7 +36,7 @@ const router = createRouter({
             component: UserDashboard,
             meta: { requiresAuth: true, role: 'user' },
             children: [
-                { path: 'inicio', name: 'user-inicio', component: InicioDashboard },
+                { path: 'inicio', name: 'user-inicio', component: InicioUserDashboard },
                 { path: 'novelas', name: 'user-novelas', component: NovelasDashboard }
             ]
         }
@@ -47,40 +44,46 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to) => {
+    const auth = Auth()
 
-    const { data: { user } } = await supabase.auth.getUser()
-    // 🔐 no logueado
-    if (to.meta.requiresAuth && !user) {
+    const { data: { session } } =
+        await supabase.auth.getSession()
+
+    auth.usuario = session?.user ?? null
+
+    if (!auth.usuario) {
+        auth.rol = null
+    }
+
+    // SOLO cargar rol si no existe
+    if (auth.usuario && !auth.rol) {
+        await auth.getRol(auth.usuario.id)
+    }
+
+
+    // no autenticado
+    if (to.meta.requiresAuth && !auth.usuario) {
         return '/login'
     }
 
-    let rol = null
+    // ya autenticado intentando ir a login
+    if (auth.usuario && to.path === '/login') {
 
-    if (user) {
-        rol = await obtenerRol(user.id)
-    }
-
-    // 🚪 login si ya está logueado → redirigir por rol
-    if (user && to.path === '/login') {
-
-        if (!rol) return '/login'
-
-        return rol === 'admin'
+        return auth.rol === 'admin'
             ? '/dashboard/admin/inicio'
             : '/dashboard/user/inicio'
     }
 
-    // 🧠 control de roles (UN SOLO BLOQUE)
-    if (to.meta.requiresAuth && user && to.meta.role) {
+    // control de roles
+    if (
+        to.meta.requiresAuth &&
+        to.meta.role &&
+        to.meta.role !== auth.rol
+    ) {
 
-        if (!rol) return '/login'
-
-        if (to.meta.role !== rol) {
-
-            return rol === 'admin'
-                ? '/dashboard/admin/inicio'
-                : '/dashboard/user/inicio'
-        }
+        return auth.rol === 'admin'
+            ? '/dashboard/admin/inicio'
+            : '/dashboard/user/inicio'
     }
 
     return true

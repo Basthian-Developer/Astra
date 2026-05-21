@@ -1,5 +1,15 @@
 @import "tailwindcss";
 
-:root{
-  background: linear-gradient(to right,#1a0047, #0d0022);
+:root {
+  background: linear-gradient(to right, #1a0047, #0d0022);
+}
+
+.fondo {
+    width: 100%;
+    height: 100%;
+    background-image: url('./assets/wallpapers/Fondo-pagina.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.6;
 }

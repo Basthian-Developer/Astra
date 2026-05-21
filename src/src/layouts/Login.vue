@@ -3,15 +3,14 @@
 import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import gsap from 'gsap'
 import { useRouter } from 'vue-router'
-import { UsarSupabase } from '../services/Auth.js'
-import { supabase } from '../libs/supabase.js'
+import { Auth } from '../services/Auth.js'
 
 // Componentes
 import Navbar from '../components/Navbar.vue'
 import Footer from '../components/Footer.vue'
 import Modal from '../components/Modal.vue'
 
-const { login, obtenerRol } = UsarSupabase()
+const auth = Auth()
 
 // Variables
 let email = ref('')
@@ -94,14 +93,11 @@ const loginSesion = async () => {
         const emailValue = email.value
         const passValue = pass.value
 
-        const data = await login(emailValue, passValue)
+        const usuario = await auth.login(emailValue, passValue)
+        
+        if(!usuario) throw new Error('Login fallido')
 
-        const user = data?.user
-
-        let rol = null
-        if (!user) throw new Error('No user')
-
-        rol = await obtenerRol(user.id)
+        const rol = auth.rol
 
         if (rol === 'admin') {
             router.push('/dashboard/admin/inicio')

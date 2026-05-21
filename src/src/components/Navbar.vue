@@ -91,8 +91,7 @@ const cerrarMenu = () => {
                         @click="redirigir(boton.tipo, boton.referencia, boton.url)">{{ boton.texto }}</button>
                 </div>
             </div>
-
-            <div v-if="login === true">
+            <div class="hidden md:flex" v-if="login === true">
                 <button
                     class="hover:scale-105 hover:text-slate-200 transition duration-200 text-xl text-slate-200 rounded shadow-2xl font-bold p-2 bg-gradient-to-r from-blue-950 to-cyan-700"
                     @click="goLogin">Acceder</button>
@@ -104,12 +103,17 @@ const cerrarMenu = () => {
     </nav>
     <!-- MENU MOBILE -->
     <div v-if="menuAbierto"
-        class="absolute top-20 left-0 z-50 w-full bg-slate-950/95 backdrop-blur-md flex flex-col items-center gap-6 py-6 md:hidden text-white">
+        class="fixed top-20 left-0 z-50 w-full bg-slate-950/95 backdrop-blur-md flex flex-col items-center gap-6 py-6 md:hidden text-white">
         <div v-for="(boton, index) in botones" :key="index">
             <button class="text-xl text-slate-300 hover:text-white"
                 @click="() => { redirigir(boton.tipo, boton.referencia, boton.url); cerrarMenu() }">
                 {{ boton.texto }}
             </button>
+        </div>
+        <div v-if="login === true">
+            <button
+                class="hover:scale-105 hover:text-slate-200 transition duration-200 text-xl text-slate-200 rounded shadow-2xl font-bold p-2 bg-gradient-to-r from-blue-950 to-cyan-700"
+                @click="goLogin">Acceder</button>
         </div>
     </div>
 </template>
