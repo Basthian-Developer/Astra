@@ -35,6 +35,17 @@ export const Novelas = defineStore('novelas', {
                 .from('portadas')
                 .getPublicUrl(fileName)
                 .data.publicUrl
+        },
+
+        async eliminarById(id){
+            const {data, error} = await supabase
+            .from('novelas')
+            .delete()
+            .eq('id', id)
+
+            if(error) throw error
+
+            this.novelas = this.novelas.filter(n => n.id !== id)
         }
     }
 })

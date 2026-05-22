@@ -12,7 +12,8 @@ const UserDashboard = () => import('../layouts/UserDashboard.vue')
 
 const InicioUserDashboard = () => import('../views/dashboard/Inicio.vue')
 const InicioAdminDashboard = () => import('../views/dashboard/admin/Inicio.vue')
-const NovelasDashboard = () => import('../views/dashboard/Novelas.vue')
+const NovelasUserDashboard = () => import('../views/dashboard/Novelas.vue')
+const NovelasAdminDashboard = () => import('../views/dashboard/admin/Novelas.vue')
 const UsuariosDashboard = () => import('../views/dashboard/Usuarios.vue')
 
 const router = createRouter({
@@ -27,7 +28,7 @@ const router = createRouter({
             meta: { requiresAuth: true, role: 'admin' },
             children: [
                 { path: 'inicio', name: 'admin-inicio', component: InicioAdminDashboard },
-                { path: 'novelas', name: 'admin-novelas', component: NovelasDashboard },
+                { path: 'novelas', name: 'admin-novelas', component: NovelasAdminDashboard },
                 { path: 'usuarios', name: 'admin-usuarios', component: UsuariosDashboard }
             ]
         },
@@ -37,7 +38,7 @@ const router = createRouter({
             meta: { requiresAuth: true, role: 'user' },
             children: [
                 { path: 'inicio', name: 'user-inicio', component: InicioUserDashboard },
-                { path: 'novelas', name: 'user-novelas', component: NovelasDashboard }
+                { path: 'novelas', name: 'user-novelas', component: NovelasUserDashboard }
             ]
         }
     ]

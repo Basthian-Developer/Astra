@@ -41,14 +41,6 @@ onMounted(async () => {
     await novelasStore.getNovelas()
 
     ctx = gsap.context(() => {
-        const inicio = document.getElementById('inicio')
-        if (inicio) {
-            inicio.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            })
-        }
-
         const tl = gsap.timeline()
 
         tl.from('.navbar', {
