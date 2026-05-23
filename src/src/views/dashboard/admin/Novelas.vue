@@ -3,6 +3,7 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { Novelas } from '../../../services/Novelas'
 import { Cross } from 'lucide-vue-next'
+import ModalForm from '../../../components/ModalForm.vue'
 
 // Variables
 const novelasLength = computed(() => novelas.value.length)
@@ -12,8 +13,10 @@ const inactiveNovelas = computed(() => novelas.value.filter(n => !n.estado).leng
 const novelasService = Novelas()
 
 const novelas = computed(() => novelasService.novelas)
+let modal = ref(null)
+const loading = ref(false)
 
-// Preparación de datos
+// Funciones
 const novelasPreparadas = computed(() =>
     novelas.value.map((n) => ({
         ...n,
@@ -66,10 +69,49 @@ const novelasFiltradas = computed(() => {
 
 const eliminarNovela = async (id, estado) => {
     try {
-        if(estado === true) throw new Error('No puede eliminarse una novela si esta activa')
+        if (estado === true) throw new Error('No puede eliminarse una novela si esta activa')
         await novelasService.eliminarById(id)
     } catch (error) {
         console.error(error.message)
+    }
+}
+
+const agregarNovela = () => {
+    const Modal = {
+        titulo: 'Agregar novela',
+        confirmar: true,
+        cancelar: true
+    }
+
+    modal.value = Modal
+}
+
+const cerrarModal = () => {
+    modal.value = null
+}
+
+const confirmarModal = async (val) => {
+    if (loading.value) return
+
+    try {
+        loading.value = true
+
+        const rutaImagen = await novelasService.uploadPortada(
+            val.imagenFile
+        )
+
+        await novelasService.createNovela({
+            ...val.novela,
+            imagen: rutaImagen
+        })
+
+        modal.value = null
+    }
+    catch(error){
+        console.error(error)
+    }
+    finally {
+        loading.value = false
     }
 }
 
@@ -151,7 +193,8 @@ onMounted(async () => {
         </div>
 
         <div class="flex justify-end px-10 pb-5">
-            <button class="bg-gradient-to-r from-green-500 to-green-600 rounded p-1 text-white flex gap-1 items-center">
+            <button @click="agregarNovela"
+                class="bg-gradient-to-r from-green-500 to-green-600 rounded p-1 text-white flex gap-1 items-center">
                 <span>
                     <Cross />
                 </span><span>Agregar nuevo</span>
@@ -219,7 +262,8 @@ onMounted(async () => {
                                 <button class="bg-amber-500 rounded px-3 py-1">
                                     Editar
                                 </button>
-                                <button @click="eliminarNovela(novela.id, novela.estado)" class="bg-red-500 rounded px-3 py-1">
+                                <button @click="eliminarNovela(novela.id, novela.estado)"
+                                    class="bg-red-500 rounded px-3 py-1">
                                     Eliminar
                                 </button>
                             </td>
@@ -229,11 +273,10 @@ onMounted(async () => {
                     </TransitionGroup>
 
                 </table>
-
             </div>
         </div>
-
     </div>
+    <ModalForm v-if="modal" :modal="modal" @close="cerrarModal" @cancel="cerrarModal" @confirm="confirmarModal" />
 </template>
 
 <style scoped>

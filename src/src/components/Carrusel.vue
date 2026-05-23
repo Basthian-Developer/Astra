@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import 'swiper/css'
 import { Autoplay } from 'swiper/modules'
@@ -11,6 +11,10 @@ const props = defineProps({
 
 const usarSwiper = computed(() => {
     return props.novelas.length >= 3
+})
+
+onMounted(()=> {
+    console.log(novelas)
 })
 </script>
 
@@ -32,7 +36,7 @@ const usarSwiper = computed(() => {
                 <div class="flex justify-center">
 
                     <div
-                        class="w-72 min-h-[540px] bg-slate-800 rounded-xl overflow-hidden shadow-lg text-white flex flex-col">
+                        class="w-72 min-h-[440px] bg-slate-800 rounded-xl overflow-hidden shadow-lg text-white flex flex-col">
 
                         <img :src="getPortada(novela.imagen)" class="h-70 w-full object-cover" alt="Portada" />
 
@@ -48,17 +52,12 @@ const usarSwiper = computed(() => {
 
                             <span class="inline-block w-fit text-xs px-2 py-1 rounded-full mt-2 mb-2 font-semibold"
                                 :class="{
-                                    'bg-gradient-to-r from-green-500 to-green-600 text-white': novela.desc_estado === 'Emisión',
-                                    'bg-yellow-500 text-black': novela.desc_estado === 'Pausa',
-                                    'bg-red-500 text-white': novela.desc_estado === 'Finalizado',
-                                    'bg-purple-700 text-white': novela.desc_estado === 'Proximamente'
+                                    'bg-gradient-to-r from-green-500 to-green-600 text-white': novela.desc_estado === 'emision',
+                                    'bg-red-500 text-white': novela.desc_estado === 'cancelado',
+                                    'bg-purple-700 text-white': novela.desc_estado === 'proximamente'
                                 }">
-                                {{ novela.desc_estado }}
+                                {{ novela.estadoEmisionText }}
                             </span>
-
-                            <p class="text-sm text-slate-300 line-clamp-3 mb-3">
-                                {{ novela.desc }}
-                            </p>
 
                             <button class="mt-auto w-full py-3 rounded-xl font-bold text-xs uppercase tracking-widest
                                 bg-gradient-to-r from-amber-200 to-amber-500 text-slate-950
@@ -86,7 +85,7 @@ const usarSwiper = computed(() => {
         <div v-if="!usarSwiper" class="flex justify-center gap-5">
 
             <div v-for="novela in novelas" :key="novela.id"
-                class="w-72 min-h-[540px] bg-slate-800 rounded-xl overflow-hidden shadow-lg text-white flex flex-col">
+                class="w-72 min-h-[440px] bg-slate-800 rounded-xl overflow-hidden shadow-lg text-white flex flex-col">
 
                 <img :src="getPortada(novela.imagen)" class="h-70 w-full object-cover" alt="Portada" />
 
@@ -101,17 +100,12 @@ const usarSwiper = computed(() => {
                     </p>
 
                     <span class="inline-block w-fit text-xs px-2 py-1 rounded-full mt-2 mb-2 font-semibold" :class="{
-                        'bg-gradient-to-r from-green-500 to-green-600 text-white': novela.desc_estado === 'Emisión',
-                        'bg-yellow-500 text-black': novela.desc_estado === 'Pausa',
-                        'bg-red-500 text-white': novela.desc_estado === 'Finalizado',
-                        'bg-purple-700 text-white': novela.desc_estado === 'Proximamente'
+                        'bg-gradient-to-r from-green-500 to-green-600 text-white': novela.desc_estado === 'emision',
+                        'bg-red-500 text-white': novela.desc_estado === 'cancelado',
+                        'bg-purple-700 text-white': novela.desc_estado === 'proximamente'
                     }">
-                        {{ novela.desc_estado }}
+                        {{ novela.estadoEmisionText }}
                     </span>
-
-                    <p class="text-sm text-slate-300 line-clamp-3 mb-3">
-                        {{ novela.desc }}
-                    </p>
 
                     <button class="mt-auto w-full py-3 rounded-xl font-bold text-xs uppercase tracking-widest
                         bg-gradient-to-r from-amber-200 to-amber-500 text-slate-950
@@ -152,12 +146,11 @@ const usarSwiper = computed(() => {
 
                             <span class="inline-block w-fit text-xs px-2 py-1 rounded-full mt-2 mb-2 font-semibold"
                                 :class="{
-                                    'bg-gradient-to-r from-green-500 to-green-600 text-white': novela.desc_estado === 'Emisión',
-                                    'bg-yellow-500 text-black': novela.desc_estado === 'Pausa',
-                                    'bg-red-500 text-white': novela.desc_estado === 'Finalizado',
-                                    'bg-purple-700 text-white': novela.desc_estado === 'Proximamente'
+                                    'bg-gradient-to-r from-green-500 to-green-600 text-white': novela.desc_estado === 'emision',
+                                    'bg-red-500 text-white': novela.desc_estado === 'cancelado',
+                                    'bg-purple-700 text-white': novela.desc_estado === 'proximamente'
                                 }">
-                                {{ novela.desc_estado }}
+                                {{ novela.estadoEmisionText }}
                             </span>
 
                             <button class="mt-auto w-full py-3 rounded-xl font-bold text-xs uppercase tracking-widest

@@ -8,7 +8,7 @@ import { Auth } from '../services/Auth.js'
 // Componentes
 import Navbar from '../components/Navbar.vue'
 import Footer from '../components/Footer.vue'
-import Modal from '../components/Modal.vue'
+import Modal from '../components/ModalMessage.vue'
 
 const auth = Auth()
 
@@ -64,7 +64,6 @@ const validarCampos = () => {
     else if (!regexEmail.test(emailValue)) {
         emailError.value = 'Solo puede ingresarse un email valido'
         isValid.value = false
-        return
     }
 
     if (passValue === '') {

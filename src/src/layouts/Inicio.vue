@@ -25,9 +25,14 @@ const novelasStore = Novelas()
 
 const novelasDestacadas = computed(() => {
     return (novelasStore.novelas ?? []).filter(n => n.destacado)
-    .map(n => ({
+    .map((n) => ({
         ...n,
-        year: new Date(n.created_at).getFullYear()
+        year: new Date(n.created_at).getFullYear(),
+        estadoEmisionText: {
+            emision: 'Emisión',
+            proximamente: 'Próximamente',
+            cancelado: 'Cancelado'
+        }[n.desc_estado]
     }))
 })
 
