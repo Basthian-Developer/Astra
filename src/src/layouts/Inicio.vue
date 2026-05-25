@@ -1,9 +1,9 @@
 <script setup>
 // Importaciones
-import { computed, onMounted, onUnmounted, defineAsyncComponent } from 'vue';
+import { computed, onMounted, onUnmounted, defineAsyncComponent, nextTick } from 'vue';
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger';
-import { Novelas } from '../services/Novelas';
+import { NovelasPublicas } from '../services/Novelas-Publicas';
 
 // Componentes
 import Navbar from '../components/Navbar.vue'
@@ -18,99 +18,92 @@ const botones = [
     { tipo: 'interno', referencia: 'autor', texto: 'Sobre mi' }
 ]
 
-const NovelasCarrusel = defineAsyncComponent(() => 
-    import('../components/Carrusel.vue'))
+const NovelasCarrusel = defineAsyncComponent(() =>
+    import('../components/Carrusel.vue')
+)
 
-const novelasStore = Novelas()
+const novelasStore = NovelasPublicas()
 
 const novelasDestacadas = computed(() => {
-    return (novelasStore.novelas ?? []).filter(n => n.destacado)
-    .map((n) => ({
-        ...n,
-        year: new Date(n.created_at).getFullYear(),
-        estadoEmisionText: {
-            emision: 'Emisión',
-            proximamente: 'Próximamente',
-            cancelado: 'Cancelado'
-        }[n.desc_estado]
-    }))
+    return novelasStore.novelasPublicas ?? []
 })
 
 let ctx = null
 
-// Aplicaciones
 gsap.registerPlugin(ScrollTrigger)
 
-// Funciones
 onMounted(async () => {
+
+    // 1. cargar data
     await novelasStore.getNovelas()
 
+    // 2. esperar render real de Vue (CLAVE para evitar parpadeo)
+    await nextTick()
+
+    // 3. preparar estado inicial (evita flash de contenido)
+    gsap.set([
+        '.navbar',
+        '.inicio',
+        '.separador',
+        '.informacion',
+        '.novelas',
+        '.autor'
+    ], {
+        opacity: 0
+    })
+
+    // 4. animaciones dentro de contexto GSAP
     ctx = gsap.context(() => {
+
         const tl = gsap.timeline()
 
-        tl.from('.navbar', {
-            y: -20,
-            duration: 1,
-            opacity: 0
+        tl.to('.navbar', {
+            y: 0,
+            opacity: 1,
+            duration: 0.8
         })
 
-        tl.from('.inicio', {
-            x: 100,
-            duration: 0.7,
-            opacity: 0
+        tl.to('.inicio', {
+            x: 0,
+            opacity: 1,
+            duration: 0.7
+        }, "-=0.3")
+
+        // Scroll animations (sin reflow raro)
+        gsap.utils.toArray([
+            '.separador',
+            '.informacion',
+            '.novelas',
+            '.autor'
+        ]).forEach((el) => {
+
+            gsap.fromTo(el,
+                { opacity: 0, y: 30 },
+                {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.6,
+                    ease: 'power2.out',
+                    scrollTrigger: {
+                        trigger: el,
+                        start: 'top 85%',
+                        once: true
+                    }
+                }
+            )
+
         })
 
-        // SCROLL ANIMATIONS (INDEPENDIENTES)
-        gsap.from('.separador', {
-            y: -20,
-            duration: 1,
-            opacity: 0,
-            scrollTrigger: {
-                trigger: '.separador',
-                start: 'top 80%',
-                toggleActions: 'play none none reverse'
-            }
-        })
+        ScrollTrigger.refresh()
 
-        gsap.from('.informacion', {
-            x: -100,
-            duration: 0.7,
-            opacity: 0,
-            scrollTrigger: {
-                trigger: '.informacion',
-                start: 'top 80%',
-                toggleActions: 'play none none reverse'
-            }
-        })
-
-        gsap.from('.novelas', {
-            x: 100,
-            duration: 0.7,
-            opacity: 0,
-            scrollTrigger: {
-                trigger: '.novelas',
-                start: 'top 80%',
-                toggleActions: 'play none none reverse'
-            }
-        })
-
-        gsap.from('.autor', {
-            x: -100,
-            duration: 0.7,
-            opacity: 0,
-            scrollTrigger: {
-                trigger: '.autor',
-                start: 'top 80%',
-                toggleActions: 'play none none reverse'
-            }
-        })
     })
+
 })
 
 onUnmounted(() => {
     ctx?.revert()
+    ScrollTrigger.getAll().forEach(t => t.kill())
 })
-
 </script>
 
 <template>
@@ -162,7 +155,7 @@ onUnmounted(() => {
                         ¿Qué es este lugar?</p>
                     <div class="flex flex-col md:flex-row justify-center items-center gap-15">
                         <div class="hidden md:flex">
-                            <img src="../assets/images/Hana-Saludando.webp" loading="lazy" alt="Hina-Portada"
+                            <img src="../assets/images/Hana-Maid.webp" loading="lazy" alt="Hina-Portada"
                                 class="w-100 md:w-80 object-contain hover:scale-105 transition duration-400">
                         </div>
 
@@ -216,7 +209,7 @@ onUnmounted(() => {
                         Novelas recientes</p>
                     <div class="overflow-hidden w-full">
                         <div class="max-w-6xl mx-auto">
-                            <NovelasCarrusel :novelas="novelasDestacadas" :getPortada="novelasStore.getPortada"/>
+                            <NovelasCarrusel :novelas="novelasDestacadas" :getPortada="novelasStore.getPortada" />
                         </div>
                         <p class="text-center text-slate-400 animate-bounce mt-10">Sigue deslizando <br> V</p>
                     </div>
@@ -267,3 +260,29 @@ onUnmounted(() => {
         </div>
     </div>
 </template>
+
+<style scoped>
+/* Evita parpadeo inicial antes de GSAP */
+.navbar,
+.inicio,
+.separador,
+.informacion,
+.novelas,
+.autor {
+    opacity: 0;
+    transform: translateY(0px);
+}
+
+/* mejora render GPU */
+.inicio,
+.informacion,
+.novelas,
+.autor {
+    will-change: transform, opacity;
+}
+
+/* evita repaint raro en scroll */
+body {
+    overflow-x: hidden;
+}
+</style>

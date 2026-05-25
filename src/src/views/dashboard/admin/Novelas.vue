@@ -1,7 +1,7 @@
 <script setup>
 // Importaciones
 import { ref, reactive, computed, onMounted } from 'vue'
-import { Novelas } from '../../../services/Novelas'
+import { Novelas } from '../../../services/Novelas-Privadas-User'
 import { Cross } from 'lucide-vue-next'
 import ModalForm from '../../../components/ModalForm.vue'
 

@@ -7,6 +7,7 @@ const Inicio = () => import('../layouts/Inicio.vue')
 const Login = () => import('../layouts/Login.vue')
 const AdminDashboard = () => import('../layouts/AdminDashboard.vue')
 const UserDashboard = () => import('../layouts/UserDashboard.vue')
+const NovelaView = () => import('../components/NovelaView.vue')
 
 // Views
 
@@ -16,12 +17,23 @@ const NovelasUserDashboard = () => import('../views/dashboard/Novelas.vue')
 const NovelasAdminDashboard = () => import('../views/dashboard/admin/Novelas.vue')
 const UsuariosDashboard = () => import('../views/dashboard/Usuarios.vue')
 
+
+
 const router = createRouter({
     history: createWebHistory(),
     routes: [
         { path: '/', component: Inicio },
         { path: '/login', component: Login },
-
+        {
+            path: '/novela/:slug',
+            name: 'novela',
+            component: NovelaView
+        },
+        // FUTURO:
+        // /novela/:slug/:capitulo
+        //
+        // Ejemplo:
+        // /novela/el-regreso-del-mago/capitulo-1
         {
             path: '/dashboard/admin',
             component: AdminDashboard,

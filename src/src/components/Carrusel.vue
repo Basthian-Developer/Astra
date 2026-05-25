@@ -1,9 +1,12 @@
 <script setup>
+// Importaciones
 import { computed, onMounted } from 'vue'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import 'swiper/css'
 import { Autoplay } from 'swiper/modules'
+import { useRouter } from 'vue-router'
 
+// Variables
 const props = defineProps({
     novelas: Array,
     getPortada: Function
@@ -13,8 +16,20 @@ const usarSwiper = computed(() => {
     return props.novelas.length >= 3
 })
 
+const router = useRouter()
+
+// Funciones
+
+function irNovela(slug){
+    router.push({
+        name: 'novela',
+        params: {
+            slug
+        }
+    })
+}
+
 onMounted(()=> {
-    console.log(novelas)
 })
 </script>
 
@@ -59,7 +74,7 @@ onMounted(()=> {
                                 {{ novela.estadoEmisionText }}
                             </span>
 
-                            <button class="mt-auto w-full py-3 rounded-xl font-bold text-xs uppercase tracking-widest
+                            <button @click="irNovela(novela.slug)" class="mt-auto w-full py-3 rounded-xl font-bold text-xs uppercase tracking-widest
                                 bg-gradient-to-r from-amber-200 to-amber-500 text-slate-950
                                 hover:from-amber-300 hover:to-amber-600
                                 transition-all active:scale-95">
@@ -107,7 +122,7 @@ onMounted(()=> {
                         {{ novela.estadoEmisionText }}
                     </span>
 
-                    <button class="mt-auto w-full py-3 rounded-xl font-bold text-xs uppercase tracking-widest
+                    <button @click="irNovela(novela.slug)" class="mt-auto w-full py-3 rounded-xl font-bold text-xs uppercase tracking-widest
                         bg-gradient-to-r from-amber-200 to-amber-500 text-slate-950
                         hover:from-amber-300 hover:to-amber-600
                         transition-all active:scale-95">
@@ -153,7 +168,7 @@ onMounted(()=> {
                                 {{ novela.estadoEmisionText }}
                             </span>
 
-                            <button class="mt-auto w-full py-3 rounded-xl font-bold text-xs uppercase tracking-widest
+                            <button @click="irNovela(novela.slug)" class="mt-auto w-full py-3 rounded-xl font-bold text-xs uppercase tracking-widest
                                 bg-gradient-to-r from-amber-200 to-amber-500 text-slate-950
                                 hover:from-amber-300 hover:to-amber-600
                                 transition-all active:scale-95">
